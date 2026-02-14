@@ -58,7 +58,8 @@
 
 <div class="form-container">
     <h2>Registration Form</h2>
-    <form method="post">
+    <form method="POST">
+        {% csrf_token %}
         <label>Name</label>
         <input type="text" name="name" placeholder="Enter your name" required>
 
@@ -71,11 +72,17 @@
         <label>Password</label>
         <input type="password" name="password" placeholder="Enter your password" required>
 
+        <label>Confirm Password</label>
+        <input type="password" name="confirmpassword" placeholder="Enter your Confirm password" required>
+
         <label>Gender</label>
         <div class="gender">
             <input type="radio" name="gender" value="Male" required> Male
             <input type="radio" name="gender" value="Female"> Female
         </div>
+
+        <label>{{ SignupError }}</label>
+        <label>{{ PasswordError }}</label>
 
         <button type="submit">Submit</button>
     </form>
