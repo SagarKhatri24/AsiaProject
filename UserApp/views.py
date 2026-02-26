@@ -3,14 +3,37 @@ from .models import *
 
 #def indexView(self):
 
+def sessionData(request):
+    if request.session.has_key('sessionName'):
+        userId = request.session["sessionId"]
+        name = request.session["sessionName"]
+        email = request.session["sessionEmail"]
+        contact = request.session["sessionContact"]
+        password = request.session["sessionPassword"]
+        gender =  request.session["sessionGender"]
+
+        userData = {
+            "id" : userId,
+            "name" : name,
+            "email" : email,
+            "contact" : contact,
+            "password" : password,
+            "gender" : gender
+        }
+    else : 
+        userData = {}
+    return userData
+
 # Create your views here.
 def indexView(request):
+    sData = sessionData(request)
+    print(sData)
     if request.session.has_key('sessionName'):
         name = request.session["sessionName"]
     else:
         name = ""
     print(name)
-    return render(request,'index.html',{"sName":name})
+    return render(request,'index.html',{"session":sData})
 
 def aboutView(request):
     return render(request,'aboutus.html')
@@ -78,9 +101,49 @@ def loginView(request):
     return render(request,"login.html")
 
 def logoutView(request):
-    request.session.clear()
-    #request.session["sessionId"] = ""
-    #request.session["sessionName"] = ""
-    #request.session["sessionEmail"] = ""
+    sData = sessionData(request)
+    if sData:
+        request.session.clear()
+        #request.session["sessionId"] = ""
+        #request.session["sessionName"] = ""
+        #request.session["sessionEmail"] = ""
+        return redirect("indexName")
+    else:
+        return redirect("indexName")
 
-    return render(request,"index.html")
+def profileView(request):
+    sData = sessionData(request)
+    if sData:
+        if request.method == "POST":
+            nameForm = request.POST["name"]
+            emailForm =request.POST["email"]
+            contactForm = request.POST["contact"]
+            passwordField = request.POST["password"]
+            confirmpasswordField = request.POST["confirmpassword"]
+            genderField = request.POST["gender"]
+            if passwordField == confirmpasswordField:
+                #checkData = UserModel.objects.filter(email=emailForm) | UserModel.objects.filter(contact=contactForm)
+                #print(checkData)
+                #if len(checkData) > 0:
+                #    return render(request,"signup.html",{"SignupError":"Users Already Exists"})
+                userModel = UserModel(pk=request.session["sessionId"])
+                userModel.name = nameForm
+                userModel.email = emailForm
+                userModel.contact = contactForm
+                userModel.password = passwordField
+                userModel.gender = genderField
+                userModel.save()
+
+                request.session["sessionName"] = nameForm
+                request.session["sessionEmail"] = emailForm
+                request.session["sessionContact"] = contactForm
+                request.session["sessionPassword"] = passwordField
+                request.session["sessionGender"] = genderField
+
+                #print("Signup Successfully")
+                return redirect("profileName")
+            else:
+                return render(request,"profile.html",{"session":sData,"PasswordError":"Password Does Not Match"})
+        return render(request,"profile.html",{"session":sData})
+    else : 
+        return redirect("indexName")

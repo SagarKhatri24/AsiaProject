@@ -81,6 +81,16 @@
               <a class="nav-link" href="#"><b>Contact</b></a>
             </li>
             
+            {% if session %}
+              <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"href="#"><b>Account</b></a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-center" href="{% url 'profileName' %}"><b>Profile</b></a></li>
+                <li><a class="dropdown-item text-center" href="{% url 'logoutName' %}"><b>Logout</b></a></li>
+                <li><a class="dropdown-item text-center" href="#"><b>Become a Seller</b></a></li>
+              </ul>
+            </li>
+            {% else %}
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"href="#"><b>Login</b></a>
               <ul class="dropdown-menu">
@@ -89,8 +99,7 @@
                 <li><a class="dropdown-item text-center" href="#"><b>Become a Seller</b></a></li>
               </ul>
             </li>
-            
-            
+            {% endif %}
           </ul>
         </div>
       </div>
